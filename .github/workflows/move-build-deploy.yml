@@ -1,6 +1,8 @@
 name: Move, Build and Deploy
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -24,11 +26,8 @@ jobs:
             echo "Source directory $SRC_DIR not found; nothing to move"
             exit 1
           fi
-          # Copy all files (including hidden) to repo root and remove source files
           rsync -av --remove-source-files "$SRC_DIR"/ ./
-          # Remove any leftover empty directories inside ai-stream
           find "$SRC_DIR" -type d -empty -delete || true
-          # If ai-stream still exists (dirs might remain), remove it
           rm -rf "$SRC_DIR"
       - name: Commit moved files and push to main
         run: |
